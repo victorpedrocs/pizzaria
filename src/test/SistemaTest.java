@@ -1,6 +1,5 @@
 package test;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,15 +13,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assert;
 
-import pizzaria.Sistema;
-
 
 public class SistemaTest {
 	
-	Connection conn;
+	static Connection conn;
 	
 	@BeforeClass
-	public void setUp() throws SQLException{
+	public static void setUp() throws SQLException{
 		Statement stmt;
 		
 		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
@@ -54,7 +51,7 @@ public class SistemaTest {
 		
 		ResultSet rs = stmt.executeQuery(sql.toString());
 		
-		Assert.assertEquals(1, rs.next());
+		Assert.assertEquals(true, rs.next());
 		
 		conn.close();
 	}
