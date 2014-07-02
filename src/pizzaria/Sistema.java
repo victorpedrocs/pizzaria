@@ -11,8 +11,6 @@ import java.sql.Statement;
 
 public class Sistema {
 
-	
-	
 	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		while(true){
@@ -53,7 +51,9 @@ public class Sistema {
 		preco = reader.readLine();
 		String sql = "INSERT INTO CARDAPIO VALUES('"+nome_pizza+"', '"+ingredientes+"', '"+preco+"')";
 		Class.forName("org.postgresql.Driver").newInstance();
+
 		conexao = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
+
 		comandoSQL = conexao.createStatement();
 		comandoSQL.executeUpdate(sql);
 		System.out.println("NOVA PIZZA INSERIDA COM SUCESSO!");
@@ -72,7 +72,9 @@ public class Sistema {
 		System.out.println("TELEFONE DO CLIENTE: ");
 		telefone = reader.readLine();
 		Class.forName("org.postgresql.Driver").newInstance();
+
 		conexao = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
+
 		comandoSQL = conexao.createStatement();
 		resultado = comandoSQL.executeQuery("SELECT * FROM CLIENTE WHERE TELEFONE = '"+telefone+"'");
 		while (resultado.next()) {
@@ -116,7 +118,9 @@ public class Sistema {
 		endereco = reader.readLine();
 		String sql = "INSERT INTO CLIENTE VALUES('"+telefone+"', '"+nome+"', '"+endereco+"')";
 		Class.forName("org.postgresql.Driver").newInstance();
+
 		conexao = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
+
 		comandoSQL = conexao.createStatement();
 		comandoSQL.executeUpdate(sql);
 		System.out.println("CLIENTE INSERIDO COM SUCESSO!");
