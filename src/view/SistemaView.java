@@ -77,11 +77,11 @@ public class SistemaView {
 			System.out.println("OCORREU ERRO DE ENTRADA E SAÍDA, TENTE NOVAMENTE \n");
 			return recuperarDadosNovoPedido();
 		}/*
-=======
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("TELEFONE DO CLIENTE: ");
 		/*telefone = reader.readLine();
->>>>>>> 62927ae52e6728a69a8bcd9b3894ae71c637aa40
+
 		Class.forName("org.postgresql.Driver").newInstance();
 
 		conexao = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
