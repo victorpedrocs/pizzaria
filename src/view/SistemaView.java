@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import pizzaria.ConnectionFactory;
 import model.Cardapio;
+import model.CardapioDAO;
 import model.Cliente;
+import model.ClienteDAO;
 import model.Pedido;
 
 
@@ -68,49 +71,39 @@ public class SistemaView {
 		String telefone, nome_pizza;
 		
 		try {
+			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+			// Recuperar Cliente do banco			
 			System.out.println("TELEFONE DO CLIENTE: ");
 			telefone = reader.readLine();
+			ClienteDAO clienteDAO = new ClienteDAO(ConnectionFactory.getConnection());
+			Cliente cliente = clienteDAO.retrieve(new Cliente(telefone));
+			System.out.println(cliente.toString());
+
+			// Recuperar Pizza do banco
+			System.out.println("PIZZA: ");
+			nome_pizza = reader.readLine();
+			CardapioDAO cardapioDAO = new CardapioDAO(ConnectionFactory.getConnection());
+			Cardapio cardapio = cardapioDAO.retrieve(new Cardapio(nome_pizza));
+			System.out.println(cardapio.toString());
+			
+			
+			System.out.println("CONFIRMA?[S/N]");
+			String opcao = reader.readLine();
+			
+			if(opcao.equalsIgnoreCase("S")){
+				System.out.println("QUANTIDADE DESEJADA: ");
+				int quantidade = Integer.parseInt(reader.readLine());
+				Pedido pedido = new Pedido(cliente, cardapio, quantidade);
+				return pedido;
+			}
 			
 			
 		} catch (IOException e) {
 			System.out.println("OCORREU ERRO DE ENTRADA E SAÍDA, TENTE NOVAMENTE \n");
 			return recuperarDadosNovoPedido();
-		}/*
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("TELEFONE DO CLIENTE: ");
-		/*telefone = reader.readLine();
-
-		Class.forName("org.postgresql.Driver").newInstance();
-
-		conexao = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
-
-		comandoSQL = conexao.createStatement();
-		resultado = comandoSQL.executeQuery("SELECT * FROM CLIENTE WHERE TELEFONE = '"+telefone+"'");
-		while (resultado.next()) {
-			System.out.println("NOME: "+resultado.getString("NOME"));
-			System.out.println("ENDERECO: "+resultado.getString("ENDERECO"));
 		}
-		resultado.close();
-		System.out.println("PIZZA: ");
-		nome_pizza = reader.readLine();
-		comandoSQL = conexao.createStatement();
-		resultado = comandoSQL.executeQuery("SELECT * FROM CARDAPIO WHERE NOME_PIZZA= '"+nome_pizza+"'");
-		while (resultado.next()) {
-			System.out.println("INGREDIENTES: "+resultado.getString("INGREDIENTES"));
-			System.out.println("PRECO: "+resultado.getString("PRECO"));
-		}
-		
-		System.out.println("CONFIRMA?[S/N]");
-		String opcao = reader.readLine();
-		if(opcao.equalsIgnoreCase("S")){
-			System.out.println("QUANTIDADE DESEJADA: ");
-			int quantidade = Integer.parseInt(reader.readLine());
-			comandoSQL.executeUpdate("INSERT INTO PEDIDO VALUES('"+telefone+"', current_timestamp, '"+nome_pizza+"', "+quantidade+")");
-			System.out.println("PEDIDO INSERIDO COM SUCESSO!");
-			System.in.read();
-		}*/
 		
 		return null;
 	}

@@ -9,6 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import view.SistemaView;
+import model.Cardapio;
+import model.CardapioDAO;
+import model.Cliente;
+import model.ClienteDAO;
+import model.Pedido;
+import model.PedidoDAO;
+
 public class Sistema {
 
 	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -23,18 +31,48 @@ public class Sistema {
 			String opcao = reader.readLine();
 			System.out.println(opcao);
 			if(opcao.equals("1")){
-				cadastrar_cliente();
+				cadastrarCliente();
 			}
 			if(opcao.equals("2")){
-				cadastrar_pedido();
+				cadastrarPedido();
 			}
 			
 			if(opcao.equals("3")){
-				cadastrar_pizza();
+				cadastrarPizza();
 			}
 			
 		}
 		
+	}
+	
+	private static void cadastrarPizza() throws IOException{
+		SistemaView sv = new SistemaView();
+		Cardapio cardapio = sv.recuperarNovoCardapio();
+		
+		CardapioDAO cardapioDAO = new CardapioDAO(ConnectionFactory.getConnection());
+		cardapioDAO.create(cardapio);
+		System.out.println("NOVA PIZZA INSERIDA COM SUCESSO!");
+		System.in.read();
+		
+	}
+	public static void cadastrarCliente() throws IOException{
+		SistemaView sv = new SistemaView();
+		Cliente cliente = sv.recuperarDadosCliente();
+		
+		ClienteDAO clienteDAO = new ClienteDAO(ConnectionFactory.getConnection());
+		clienteDAO.create(cliente);
+		System.out.println("CLIENTE INSERIDO COM SUCESSO!");
+		System.in.read();
+	}
+	
+	public static void cadastrarPedido() throws IOException{
+		SistemaView sv = new SistemaView();
+		Pedido pedido = sv.recuperarDadosNovoPedido();
+		
+		PedidoDAO pedidoDAO = new PedidoDAO(ConnectionFactory.getConnection());
+		pedidoDAO.create(pedido);
+		System.out.println("PEDIDO INSERIDO COM SUCESSO!");
+		System.in.read();
 	}
 
 	private static void cadastrar_pizza() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {

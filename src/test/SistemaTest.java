@@ -10,8 +10,11 @@ import java.sql.Statement;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Assert;
+
+import pizzaria.ConnectionFactory;
 
 
 public class SistemaTest {
@@ -50,78 +53,9 @@ public class SistemaTest {
 	}
 	
 	@Test
-	public void testCadastraCliente() throws SQLException{
-		
-		try {
-			SistemaMock.cadastra_cliente();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		Statement stmt;
-		
-		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
-		stmt = conn.createStatement();
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("select count(*) from cliente_teste where telefone = '99' and nome = 'VV' and endereco = 'AA'");
-		
-		ResultSet rs = stmt.executeQuery(sql.toString());
-		
-		Assert.assertEquals(true, rs.next());
-		
-		rs.close();
-		conn.close();
-	}
-	
-	@Test
-	public void testCadastrarPizza() throws SQLException{
-		try {
-			SistemaMock.cadastra_pizza();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		Statement statement;
-		
-		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
-		statement = conn.createStatement();
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("select count(*) from CARDAPIO_TESTE where nome_pizza = 'bacon' and ingredientes = 'bacon' and preco = '22'");
-		
-		ResultSet rs = statement.executeQuery(sql.toString());
-		
-		Assert.assertEquals(true, rs.next());
-		
-		rs.close();
-		conn.close();
-	}
-	
-	@Test
-	public void testPedido() throws SQLException{
-		try {
-			SistemaMock.cadastrar_pedido();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		Statement statement;
-		String telefone = "teste", nome_pizza = "teste";
-		int quantidade = 2;
-		
-		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
-		statement = conn.createStatement();
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT COUNT(*) FROM PEDIDO_TESTE WHERE telefone = '"+telefone+"'and nome_pizza = '"+nome_pizza+"' and quantidade = "+quantidade+";");
-		
-		ResultSet rs = statement.executeQuery(sql.toString());
-		
-		Assert.assertEquals(true, rs.next());
-		
-		rs.close();
-		conn.close();
+	public void testConnectionFactory() throws SQLException {
+		Connection con = ConnectionFactory.getConnection();
+		Assert.assertEquals(false, con.isClosed());
 	}
 	
 	@AfterClass
