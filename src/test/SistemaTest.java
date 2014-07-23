@@ -1,18 +1,25 @@
 package test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.After;
+import model.Cardapio;
+import model.CardapioDAO;
+import model.Cliente;
+import model.ClienteDAO;
+import model.Pedido;
+import model.PedidoDAO;
+
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.Assert;
 
 import pizzaria.ConnectionFactory;
 
@@ -23,33 +30,8 @@ public class SistemaTest {
 	
 	@BeforeClass
 	public static void setUp() throws SQLException{
-		Statement stmt;
 		
 		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
-		stmt = conn.createStatement();
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("create table cliente_teste (telefone varchar primary key, nome varchar, endereco varchar); ");
-		sql.append("create table cardapio_teste (nome_pizza varchar primary key, ingredientes varchar, preco varchar); ");
-		sql.append("create table pedido_teste (telefone varchar,"); 
-			sql.append("data_hora timestamp, ");
-			sql.append("nome_pizza varchar, ");
-			sql.append("quantidade int, ");
-			sql.append("constraint pk_teste primary key (telefone, data_hora, nome_pizza), "); 
-			sql.append("constraint fk_cliente_teste foreign key (telefone) references cliente_teste (telefone), "); 
-			sql.append("constraint fk_cardapio_teste foreign key (nome_pizza) references cardapio_teste(nome_pizza)); ");
-		stmt.executeUpdate(sql.toString());
-		
-		
-		sql = new StringBuilder("INSERT INTO cliente_teste VALUES('teste', 'teste', 'teste'); ");
-		String nome_pizza = "teste", ingredientes = "teste", preco = "teste";
-		sql.append("INSERT INTO CARDAPIO_TESTE VALUES('")
-			.append(nome_pizza).append("', '")
-			.append(ingredientes).append("', '")
-			.append(preco).append("')");
-		
-		stmt.executeUpdate(sql.toString());
-		conn.close();
 	}
 	
 	@Test
@@ -58,20 +40,75 @@ public class SistemaTest {
 		Assert.assertEquals(false, con.isClosed());
 	}
 	
+	
+	@Test 
+	public void testInsereCliente() throws SQLException{
+		String teste = "teste";
+		ClienteDAO clienteDAO = new ClienteDAO(conn);
+		clienteDAO.create(new Cliente(teste, teste, teste));
+		
+		String sql = "SELECT * FROM cliente WHERE telefone = 'teste' AND nome = 'teste' AND endereco = 'teste'";
+		Statement statement = conn.createStatement();
+		
+		ResultSet result = statement.executeQuery(sql);
+		assertEquals(true, result.next());
+		
+	}
+	
+	
+	@Test
+	public void testeInsereCardapio() throws SQLException{
+		String teste = "teste";
+		CardapioDAO cardapioDAO = new CardapioDAO(conn);
+		cardapioDAO.create(new Cardapio(teste, teste, teste));
+		
+		String sql = "SELECT * FROM cardapio WHERE nome_pizza = 'teste' AND ingredientes = 'teste' AND preco = 'teste'";
+		Statement statement = conn.createStatement();
+		
+		ResultSet result = statement.executeQuery(sql);
+		assertEquals(true, result.next());
+	}
+	
+	
+	@Test
+	public void testeInserePedido() throws SQLException {
+		String teste = "teste2";
+		PedidoDAO pedidoDAO = new PedidoDAO(conn);
+		CardapioDAO cardapioDAO = new CardapioDAO(conn);
+		ClienteDAO clienteDAO = new ClienteDAO(conn);
+		
+		Cliente cliente = new Cliente(teste, teste, teste);
+		Cardapio cardapio = new Cardapio(teste, teste, teste);
+		clienteDAO.create(cliente);
+		cardapioDAO.create(cardapio);
+		
+		pedidoDAO.create(new Pedido(cliente, cardapio, 1));
+		
+		
+		String sql = "SELECT * FROM pedido WHERE telefone = 'teste2' AND nome_pizza = 'teste2' AND quantidade = 1";
+		Statement statement = conn.createStatement();
+		
+		ResultSet result = statement.executeQuery(sql);
+		assertEquals(true, result.next());
+		
+	}
+	
 	@AfterClass
 	public static void afterTest() throws SQLException{
 		Statement stmt;
-		
-		conn = DriverManager.getConnection("jdbc:postgresql://localhost/pizzaria", "postgres", "postgres");
 		stmt = conn.createStatement();
+		String sqlDropCliente1 = "DELETE FROM cliente WHERE telefone = 'teste' AND nome = 'teste' AND endereco = 'teste'";
+		String sqlDropCliente2 = "DELETE FROM cliente WHERE telefone = 'teste2' AND nome = 'teste2' AND endereco = 'teste2'";
+		String sqlDropCardapio1 = "DELETE FROM cardapio WHERE nome_pizza = 'teste' AND ingredientes = 'teste' AND preco = 'teste'";
+		String sqlDropCardapio2 = "DELETE FROM cardapio WHERE nome_pizza = 'teste2' AND ingredientes = 'teste2' AND preco = 'teste2'";
+		String sqlDropPedido = "DELETE FROM pedido WHERE telefone = 'teste2' AND nome_pizza = 'teste2' AND quantidade = 1";
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("drop table if exists pedido_teste; ")
-			.append("drop table if exists cliente_teste; ")
-			.append("drop table if exists cardapio_teste; ");
+		stmt.executeUpdate(sqlDropCardapio1);
+		stmt.executeUpdate(sqlDropCliente1);
+		stmt.executeUpdate(sqlDropPedido);
+		stmt.executeUpdate(sqlDropCardapio2);
+		stmt.executeUpdate(sqlDropCliente2);
 		
-		
-		stmt.executeUpdate(sql.toString());
 		conn.close();
 		
 	}

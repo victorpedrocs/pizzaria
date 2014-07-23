@@ -24,6 +24,7 @@ create table pedido(
   cliente_fk integer,
   forma_de_pagamento_fk integer,
   data_hora timestamp,
+  total_pago float,
   
   constraint fk_pedido_cliente foreign key (cliente_fk) references cliente(codigo),
   constraint fk_pedido_forma_de_pagamento foreign key (forma_de_pagamento_fk) references forma_de_pagamento (codigo)
